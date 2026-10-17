@@ -28,7 +28,8 @@ jobs:
               fallo=1
             fi
           fi
-          if echo "$cambios" | grep -qE "^$app/evals/golden/"; then
+          # El README del golden es documentación, no datos etiquetados: no requiere la etiqueta.
+          if echo "$cambios" | grep -E "^$app/evals/golden/" | grep -qvE "/README\.md$"; then
             if ! tiene "golden-etiquetado-humano"; then
               echo "::error::El PR modifica el golden dataset. Solo el equipo lo etiqueta: requiere la etiqueta golden-etiquetado-humano."
               fallo=1

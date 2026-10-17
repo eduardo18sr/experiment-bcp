@@ -1,0 +1,18 @@
+nombre: extraer_documento
+version: 1.0.0
+tipo: deterministico
+descripcion: >
+  Lee un documento Word (.docx) o Markdown (.md) y lo traduce a una estructura canónica: secciones en
+  orden, con título, nivel, camino de títulos, párrafos y tablas. Detecta los títulos por el estilo del
+  párrafo (incluidos los estilos traducidos, como "Título 1"), por su nivel de esquema o por la sintaxis
+  Markdown. No interpreta el contenido. Los PDF escaneados no entran aquí: requieren OCR (capacidad aparte).
+entrada:
+  ruta: Ruta local del documento (.docx o .md)
+salida:
+  documento: DocumentoCanonico con archivo, SHA-256, formato, secciones y advertencias
+errores:
+  - archivo_no_encontrado
+  - formato_no_soportado
+  - documento_corrupto
+propietario: equipo-validacion-implementacion
+tests: tests/test_extraer_documento.py

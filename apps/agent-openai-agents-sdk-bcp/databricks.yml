@@ -1,11 +1,29 @@
 bundle:
   name: agent_openai_agents_sdk
 
+# Ubicación en Unity Catalog de expedientes, resultados y grafo de conocimiento.
+# Crear antes:  CREATE SCHEMA IF NOT EXISTS <catalogo>.<esquema>;  CREATE VOLUME IF NOT EXISTS <catalogo>.<esquema>.<volumen>;
+variables:
+  catalogo:
+    description: Catálogo de Unity Catalog (en Free Edition suele ser "workspace")
+    default: workspace
+  esquema:
+    description: Esquema de la plataforma MRM
+    default: mrm
+  volumen:
+    description: Volume con expedientes, resultados y conocimiento
+    default: mrm
+  endpoint_vector_search:
+    description: Endpoint de Vector Search para el grafo (vacío = solo recuperación léxica)
+    default: ""
+
 resources:
   apps:
     agent_openai_agents_sdk:
-      name: "agent-openai-agents-sdk"
-      description: "OpenAI Agents SDK agent application"
+      # Debe coincidir con el nombre de la app creada desde la UI. Si la app ya existe, vincularla antes de
+      # desplegar con: databricks bundle deployment bind agent_openai_agents_sdk agent-openai-agents-sdk-bcp
+      name: "agent-openai-agents-sdk-bcp"
+      description: "Agente validador de implementación de modelos (MRM) con comparador Excel-Python"
       source_code_path: ./
       config:
         command: ["uv", "run", "start-app"]
@@ -22,6 +40,20 @@ resources:
             value: "300"
           - name: MLFLOW_EXPERIMENT_ID
             value_from: "experiment"
+          # Plataforma MRM. Sin MRM_RAIZ_EXPEDIENTES la app arranca en modo demo con casos sintéticos.
+          # Para usar Volumes, descomentar y conceder el recurso 'volumen-mrm' más abajo:
+          # - name: MRM_RAIZ_EXPEDIENTES
+          #   value: "/Volumes/${var.catalogo}/${var.esquema}/${var.volumen}/expedientes"
+          # - name: MRM_RAIZ_RESULTADOS
+          #   value: "/Volumes/${var.catalogo}/${var.esquema}/${var.volumen}/resultados"
+          # - name: MRM_GRAFO
+          #   value: "/Volumes/${var.catalogo}/${var.esquema}/${var.volumen}/conocimiento/grafo.json"
+          # - name: MRM_INDICE_VECTORIAL
+          #   value: "${var.catalogo}.${var.esquema}.kg_fragmentos_indice"
+          - name: MRM_JUEZ_HABILITADO
+            value: "true"
+          - name: MRM_ENDPOINT_JUEZ
+            value: "databricks-claude-sonnet-5-5"
 
       # Resources which this app has access to
       resources:
@@ -39,6 +71,70 @@ resources:
             name: 'databricks-claude-sonnet-5-5'
             permission: 'CAN_QUERY'
 
+        # Acceso de la app al Volume de la plataforma (descomentar junto con las variables MRM_* de arriba).
+        # - name: 'volumen-mrm'
+        #   uc_securable:
+        #     securable_full_name: '${var.catalogo}.${var.esquema}.${var.volumen}'
+        #     securable_type: 'VOLUME'
+        #     permission: 'WRITE_VOLUME'
+
+  jobs:
+    mrm_ingestar_grafo:
+      name: mrm-ingestar-grafo-conocimiento
+      description: Bóveda Obsidian del Volume -> tablas Delta kg_* + grafo.json (+ índice de Vector Search opcional)
+      tasks:
+        - task_key: ingestar
+          spark_python_task:
+            python_file: ./jobs/ingestar_grafo.py
+            parameters:
+              - --boveda
+              - /Volumes/${var.catalogo}/${var.esquema}/${var.volumen}/conocimiento/boveda
+              - --catalogo
+              - ${var.catalogo}
+              - --esquema
+              - ${var.esquema}
+              - --salida_json
+              - /Volumes/${var.catalogo}/${var.esquema}/${var.volumen}/conocimiento/grafo.json
+              - --endpoint_vs
+              - ${var.endpoint_vector_search}
+          environment_key: mrm
+      environments:
+        - environment_key: mrm
+          spec:
+            client: "2"
+            dependencies: ["pydantic>=2.7", "pyyaml>=6.0.2", "openpyxl>=3.1.5"]
+
+    mrm_evaluaciones:
+      name: mrm-evaluaciones-agente
+      description: Arnés de evaluación sobre la suite completa; falla si no se cumplen los umbrales
+      tasks:
+        - task_key: evaluar
+          spark_python_task:
+            python_file: ./jobs/correr_evals.py
+          environment_key: mrm
+      environments:
+        - environment_key: mrm
+          spec:
+            client: "2"
+            dependencies: ["pydantic>=2.7", "pyyaml>=6.0.2", "openpyxl>=3.1.5", "mlflow>=3.10.0"]
+
+    mrm_publicar_casos_sinteticos:
+      name: mrm-publicar-casos-sinteticos
+      description: Publica los expedientes sintéticos en el Volume para probar la app sin datos reales
+      tasks:
+        - task_key: publicar
+          spark_python_task:
+            python_file: ./jobs/publicar_casos_sinteticos.py
+            parameters:
+              - --destino
+              - /Volumes/${var.catalogo}/${var.esquema}/${var.volumen}/expedientes
+          environment_key: mrm
+      environments:
+        - environment_key: mrm
+          spec:
+            client: "2"
+            dependencies: ["pydantic>=2.7", "pyyaml>=6.0.2", "openpyxl>=3.1.5"]
+
 targets:
   dev:
     mode: development
@@ -53,4 +149,4 @@ targets:
     resources:
       apps:
         agent_openai_agents_sdk:
-          name: agent-openai-agents-sdk
+          name: agent-openai-agents-sdk-bcp

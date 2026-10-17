@@ -1,0 +1,16 @@
+nombre: consultar_conocimiento
+version: 1.0.0
+tipo: probabilistico
+descripcion: >
+  Recupera buenas prácticas del grafo de conocimiento (GraphRAG): semillas por relevancia léxica
+  o semántica y expansión por las aristas del grafo. Devuelve citas literales de las notas.
+  Uso restringido a controles de juicio; necesita su propia métrica de recall en la suite.
+entrada:
+  consulta: Texto de la consulta
+  k: Número máximo de prácticas a devolver
+salida:
+  practicas: Notas recuperadas con sección, cita literal, puntaje, mapas y camino en el grafo
+errores:
+  - conocimiento_no_disponible
+propietario: equipo-validacion-implementacion
+tests: tests/test_consultar_conocimiento.py

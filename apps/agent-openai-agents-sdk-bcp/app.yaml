@@ -14,3 +14,17 @@ env:
     value: "300"
   - name: MLFLOW_EXPERIMENT_ID
     valueFrom: "experiment"
+  # Plataforma MRM. Sin MRM_RAIZ_EXPEDIENTES la app arranca en modo demo con expedientes sintéticos.
+  # Para trabajar con un Volume de Unity Catalog, agregar el Volume como recurso de la app y descomentar:
+  # - name: MRM_RAIZ_EXPEDIENTES
+  #   value: "/Volumes/workspace/mrm/mrm/expedientes"
+  # - name: MRM_RAIZ_RESULTADOS
+  #   value: "/Volumes/workspace/mrm/mrm/resultados"
+  # - name: MRM_GRAFO
+  #   value: "/Volumes/workspace/mrm/mrm/conocimiento/grafo.json"
+  # - name: MRM_INDICE_VECTORIAL
+  #   value: "workspace.mrm.kg_fragmentos_indice"
+  - name: MRM_JUEZ_HABILITADO
+    value: "true"
+  - name: MRM_ENDPOINT_JUEZ
+    value: "databricks-claude-sonnet-5-5"

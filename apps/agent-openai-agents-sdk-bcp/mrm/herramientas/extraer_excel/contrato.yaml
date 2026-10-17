@@ -1,0 +1,16 @@
+nombre: extraer_excel
+version: 1.0.0
+tipo: deterministico
+descripcion: >
+  Lee un libro Excel y lo traduce a la representación canónica: cada celda con su valor literal
+  o en caché, y cada fórmula con su árbol de operaciones. No interpreta qué calcula el libro.
+entrada:
+  ruta: Ruta local del archivo .xlsx
+  hojas: Hojas a extraer; vacío extrae todas
+salida:
+  libro: LibroCanonico con celdas, árboles, nombres definidos, SHA-256 y si existe caché de valores
+errores:
+  - archivo_no_encontrado
+  - formato_no_soportado
+propietario: equipo-validacion-implementacion
+tests: tests/test_extraer_excel.py

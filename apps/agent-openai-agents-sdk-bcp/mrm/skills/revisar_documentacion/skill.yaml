@@ -1,0 +1,34 @@
+nombre: revisar-documentacion
+version: 1.0.0
+dimension: documentacion
+descripcion: >
+  Verifica que la documentación metodológica del expediente contenga la información que exige el catálogo:
+  secciones obligatorias con contenido, tablas con las columnas requeridas y, como control de juicio, que el
+  contenido declare de forma explícita los elementos pedidos. Corte C recursivo: presencia y estructura son
+  determinísticas; la suficiencia del contenido es juicio.
+aplica_a:
+  tipo_modelo: [pd, pricing]
+procedimiento:
+  - Localizar los documentos del expediente en la carpeta configurada (.docx y .md)
+  - Extraer cada documento a su estructura canónica de secciones y tablas (extraer_documento)
+  - Buscar la sección que pide cada control por sus títulos equivalentes (determinístico)
+  - Verificar presencia y contenido mínimo de la sección, o la tabla con sus columnas (determinístico)
+  - En controles de juicio, recuperar prácticas del grafo y consultar al juez solo con la sección pertinente
+  - Verificar que cada cita del juez exista literalmente en la sección del documento
+herramientas_requeridas:
+  - {nombre: extraer_documento, version_minima: 1.0.0}
+  - {nombre: consultar_conocimiento, version_minima: 1.0.0}
+reglas:
+  - presencia_seccion
+  - presencia_tabla
+  - suficiencia_contenido
+usa_juez: true
+configuraciones:
+  - tipo_modelo: pd
+    catalogo: documentacion_pd
+    version_catalogo: 1.0.0
+    parametros: {carpeta_documentos: documentacion, extensiones: [.docx, .md], max_caracteres_juez: 4000}
+  - tipo_modelo: pricing
+    catalogo: documentacion_pricing
+    version_catalogo: 1.0.0
+    parametros: {carpeta_documentos: documentacion, extensiones: [.docx, .md], max_caracteres_juez: 4000}

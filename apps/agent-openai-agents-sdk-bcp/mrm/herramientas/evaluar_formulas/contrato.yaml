@@ -1,0 +1,25 @@
+nombre: evaluar_formulas
+version: 1.0.0
+tipo: deterministico
+descripcion: >
+  Oráculo de la referencia. Recalcula las celdas objetivo desde el árbol canónico, para el escenario
+  base y para escenarios con celdas de entrada sobrescritas. Antes, valida el oráculo contra los
+  valores en caché del libro. Soporta IF, IFERROR, AND, OR, NOT, LN, LOG, LOG10, EXP, SQRT, ABS,
+  ROUND, ROUNDUP, ROUNDDOWN, SUM, AVERAGE, MIN, MAX, POWER, PI, VLOOKUP, INDEX y MATCH.
+entrada:
+  libro: LibroCanonico producido por extraer_excel
+  objetivos: Celdas o rangos completos a calcular
+  escenarios: Sobrescrituras de celdas por escenario; {} es el escenario base
+  validar_cache: Si se valida el oráculo contra la caché antes de usarlo
+  tolerancia_cache: Tolerancia absoluta y relativa de esa validación
+salida:
+  oraculo_valido: true si reproduce la caché; false si no; null si el libro no tiene caché
+  celdas_validadas: Celdas con fórmula contrastadas contra la caché
+  celdas_sin_cache: Celdas con fórmula sin valor en caché
+  discrepancias_cache: Celdas donde el oráculo no reproduce la caché
+  errores_oraculo: Funciones no soportadas, referencias circulares o fórmulas no traducibles
+  resultados: Valores calculados por escenario y objetivo
+errores:
+  - objetivo_invalido
+propietario: equipo-validacion-implementacion
+tests: tests/test_evaluar_formulas.py

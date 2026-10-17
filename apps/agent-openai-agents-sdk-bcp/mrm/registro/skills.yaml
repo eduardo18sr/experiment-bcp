@@ -1,0 +1,9 @@
+# Registro de skills. Cada skill declara en su spec la dimensión, los tipos de modelo y las herramientas
+# que necesita. El resolutor elige por especificidad; dos skills con la misma clave son un defecto.
+skills:
+  - spec: skills/validar_implementacion_calculo/skill.yaml
+    implementacion: mrm.skills.validar_implementacion_calculo.procedimiento:ValidarImplementacionCalculo
+    estado: activo
+  - spec: skills/revisar_documentacion/skill.yaml
+    implementacion: mrm.skills.revisar_documentacion.procedimiento:RevisarDocumentacion
+    estado: activo

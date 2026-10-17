@@ -1,0 +1,13 @@
+# Registro de agentes (formato inspirado en Open Agent Spec / AGENTS.md).
+agentes:
+  - id: validador-implementacion
+    version: 0.1.0
+    descripcion: >
+      Agente validador de implementación de modelos. Orquesta skills por dimensión sobre un expediente y
+      entrega insumo para el validador humano. Nunca aprueba ni rechaza un modelo.
+    skills: [validar-implementacion-calculo]
+    modelo_base: databricks-claude-sonnet-5-5
+    etapa_autonomia: sombra   # sombra -> copiloto -> autonomo_con_excepcion (F9)
+    responsable: por designar
+    validador_independiente: por designar
+    recertificacion: pendiente de definir el tier del agente como modelo del inventario

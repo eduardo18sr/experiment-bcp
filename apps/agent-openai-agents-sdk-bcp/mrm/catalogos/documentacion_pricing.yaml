@@ -1,0 +1,76 @@
+# Catálogo de controles · documentación × pricing
+# Mismo procedimiento que PD (una skill, dos catálogos). Estado: borrador del piloto, pendiente de Gate 3.
+nombre: documentacion_pricing
+version: 1.0.0
+dimension: documentacion
+tipo_modelo: pricing
+descripcion: Controles sobre la documentación metodológica de modelos de pricing.
+controles:
+  - id: DOC-PRC-001
+    version: 1.0.0
+    nombre: Sección de perímetro de aplicación
+    enunciado_ears: >
+      Cuando la documentación metodológica no contenga una sección sobre el perímetro de aplicación del modelo,
+      o esa sección no tenga contenido, el sistema deberá levantar un hallazgo de severidad Media.
+    evidencia_requerida: Documento y sección encontrada, o la lista de secciones del documento si no existe
+    tipo: deterministico
+    tier_minimo: 4
+    severidad: Media
+    referencia: Res. S.B.S. 053-2023 · documentación del modelo
+    regla: presencia_seccion
+    criterio:
+      titulos: [perímetro de aplicación, alcance del modelo, ámbito de aplicación]
+      minimo_caracteres: 40
+
+  - id: DOC-PRC-002
+    version: 1.0.0
+    nombre: Perímetro de aplicación explícito
+    enunciado_ears: >
+      Cuando el documento no declare de forma explícita el perímetro de aplicación del modelo (segmento,
+      producto, canal y vigencia), el sistema deberá levantar un hallazgo de severidad Media.
+    evidencia_requerida: Cita textual de la sección donde se declara, o constancia de ausencia
+    tipo: juicio
+    tier_minimo: 4
+    severidad: Media
+    referencia: Res. S.B.S. 053-2023 · documentación del modelo
+    regla: suficiencia_contenido
+    criterio:
+      titulos: [perímetro de aplicación, alcance del modelo, ámbito de aplicación]
+      elementos: [segmento, producto, canal, vigencia]
+      consulta: documentar el perímetro de aplicación del modelo con segmento, producto, canal y vigencia
+      rubrica: >
+        Cumple solo si cada elemento aparece declarado de forma explícita en la sección. Un elemento implícito,
+        ambiguo o ausente es incumplimiento. Cita el texto que declara cada elemento presente.
+
+  - id: DOC-PRC-003
+    version: 1.0.0
+    nombre: Tarifario vigente documentado
+    enunciado_ears: >
+      Cuando la documentación metodológica no contenga una sección que identifique el tarifario vigente que usa
+      el modelo, el sistema deberá levantar un hallazgo de severidad Media.
+    evidencia_requerida: Documento y sección encontrada, o la lista de secciones del documento si no existe
+    tipo: deterministico
+    tier_minimo: 4
+    severidad: Media
+    referencia: Checklist de implementación v12, versionamiento y control de cambios
+    regla: presencia_seccion
+    criterio:
+      titulos: [tarifario vigente, tasas vigentes, versión del tarifario]
+      minimo_caracteres: 30
+
+  - id: DOC-PRC-004
+    version: 1.0.0
+    nombre: Tabla de segmentos
+    enunciado_ears: >
+      Cuando la documentación metodológica no contenga una tabla de segmentos tarifarios, el sistema deberá
+      levantar un hallazgo de severidad Baja.
+    evidencia_requerida: Sección y encabezado de la tabla encontrada
+    tipo: deterministico
+    tier_minimo: 3
+    severidad: Baja
+    referencia: Checklist de implementación v12, revisión de código documentado
+    regla: presencia_tabla
+    criterio:
+      titulos: [segmentos, tarifario]
+      columnas: [segmento]
+      filas_minimas: 1

@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pruebas:
+    name: Suite completa y arnés de evaluación
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/agent-openai-agents-sdk-bcp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Instalar dependencias
+        run: uv sync
+      - name: Tests (herramientas, chasis, regresión, API)
+        run: uv run pytest -q
+      - name: Arnés de evaluación (falla si no se cumplen los umbrales)
+        run: uv run mrm-evaluar

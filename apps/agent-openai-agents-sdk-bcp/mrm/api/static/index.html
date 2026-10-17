@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validador de implementación</title>
+<style>
+  :root {
+    --fondo: #f6f7f9; --panel: #ffffff; --texto: #1c2430; --suave: #5b6676; --borde: #dde2ea;
+    --acento: #1f5fbf; --ok: #1e7b4a; --ok-fondo: #e6f4ec; --mal: #b42318; --mal-fondo: #fdecea;
+    --duda: #9a6700; --duda-fondo: #fff4d6; --na: #5b6676; --na-fondo: #eef0f3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fondo: #12161c; --panel: #1a2029; --texto: #e6eaf0; --suave: #9aa5b5; --borde: #2c3542;
+      --acento: #6ea8ff; --ok: #5fd39a; --ok-fondo: #173326; --mal: #ff8a7d; --mal-fondo: #3a1d1a;
+      --duda: #f2c14e; --duda-fondo: #3a3017; --na: #9aa5b5; --na-fondo: #242b36;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fondo); color: var(--texto); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 16px 24px; border-bottom: 1px solid var(--borde); background: var(--panel); display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+  header h1 { font-size: 18px; margin: 0; }
+  header a { color: var(--acento); }
+  .aviso { color: var(--suave); font-size: 13px; }
+  main { display: grid; grid-template-columns: 320px 1fr; gap: 16px; padding: 16px 24px; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 16px; } }
+  section.panel { background: var(--panel); border: 1px solid var(--borde); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  h2 { font-size: 15px; margin: 0 0 12px; }
+  h3 { font-size: 14px; margin: 16px 0 8px; }
+  .expediente { border: 1px solid var(--borde); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
+  .expediente b { display: block; }
+  .expediente small { color: var(--suave); display: block; margin-bottom: 8px; }
+  button { background: var(--acento); color: #fff; border: 0; border-radius: 6px; padding: 6px 12px; cursor: pointer; font: inherit; }
+  button:disabled { opacity: .5; cursor: progress; }
+  button.secundario { background: transparent; color: var(--acento); border: 1px solid var(--borde); }
+  .insignia { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .cumple { color: var(--ok); background: var(--ok-fondo); }
+  .no_cumple { color: var(--mal); background: var(--mal-fondo); }
+  .no_concluyente { color: var(--duda); background: var(--duda-fondo); }
+  .no_aplica, .excluido { color: var(--na); background: var(--na-fondo); }
+  .resumen { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0 12px; }
+  .cifra { border: 1px solid var(--borde); border-radius: 6px; padding: 8px 12px; min-width: 110px; }
+  .cifra span { display: block; font-size: 20px; font-weight: 600; }
+  .cifra small { color: var(--suave); }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+  th { color: var(--suave); font-weight: 600; font-size: 12px; }
+  tr.fila-control { cursor: pointer; }
+  tr.fila-control:hover { background: var(--fondo); }
+  .detalle { background: var(--fondo); }
+  .detalle ul { margin: 4px 0 8px; padding-left: 18px; }
+  code { font-size: 12px; }
+  .motivos { color: var(--suave); font-size: 12px; }
+  .vacio { color: var(--suave); }
+  .error { color: var(--mal); }
+  input[type=search] { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--borde); background: var(--fondo); color: var(--texto); font: inherit; }
+  .practica { border-left: 3px solid var(--acento); padding: 4px 10px; margin: 8px 0; }
+  .practica small { color: var(--suave); display: block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Validador de implementación · MRM</h1>
+  <span class="aviso">Resultado preliminar generado por un agente. La decisión es del validador humano.</span>
+  <a href="/">Ir al chat del agente</a>
+</header>
+<main>
+  <div>
+    <section class="panel">
+      <h2>Expedientes</h2>
+      <div id="expedientes" class="vacio">Cargando…</div>
+    </section>
+    <section class="panel">
+      <h2>Validaciones anteriores</h2>
+      <div id="historial" class="vacio">Sin validaciones.</div>
+    </section>
+    <section class="panel">
+      <h2>Buenas prácticas (grafo)</h2>
+      <input type="search" id="consulta" placeholder="p. ej. versión de parámetros en el código">
+      <div id="practicas"></div>
+    </section>
+  </div>
+  <div>
+    <section class="panel" id="resultado"><p class="vacio">Elige un expediente y pulsa <b>Validar</b>.</p></section>
+    <section class="panel">
+      <h2>Capacidades registradas</h2>
+      <div id="capacidades" class="vacio">Cargando…</div>
+    </section>
+  </div>
+</main>
+<script>
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const ETIQUETAS = {cumple: "Cumple", no_cumple: "No cumple", no_concluyente: "No concluyente", no_aplica: "No aplica", excluido: "Excluido por tier"};
+const insignia = (v) => `<span class="insignia ${esc(v)}">${esc(ETIQUETAS[v] || v || "—")}</span>`;
+
+async function api(ruta, opciones) {
+  const respuesta = await fetch(ruta, opciones);
+  if (!respuesta.ok) throw new Error((await respuesta.json().catch(() => ({}))).detail || respuesta.statusText);
+  return respuesta.json();
+}
+
+async function cargarExpedientes() {
+  const lista = await api("/mrm/api/expedientes");
+  document.getElementById("expedientes").innerHTML = lista.length ? lista.map((e) => `
+    <div class="expediente">
+      <b>${esc(e.id)}</b><small>${esc(e.modelo_id)} · ${esc(e.descripcion)}</small>
+      <button data-id="${esc(e.id)}" onclick="validar(this)">Validar</button>
+    </div>`).join("") : "No hay expedientes.";
+}
+
+async function cargarHistorial() {
+  const lista = await api("/mrm/api/validaciones");
+  document.getElementById("historial").innerHTML = lista.length ? lista.map((v) => `
+    <div class="expediente"><b>${esc(v.expediente_id)}</b>
+      <small>${esc(v.fecha_utc)} · ${esc(v.conteos.no_cumple)} hallazgos</small>
+      ${insignia(v.veredicto_integral)} <button class="secundario" onclick="abrir('${esc(v.id_validacion)}')">Ver</button>
+    </div>`).join("") : "Sin validaciones.";
+}
+
+async function cargarCapacidades() {
+  const c = await api("/mrm/api/capacidades");
+  document.getElementById("capacidades").innerHTML = `
+    <p class="motivos">Agente <code>${esc(c.agente.id)}@${esc(c.agente.version)}</code> · etapa <b>${esc(c.agente.etapa_autonomia)}</b> ·
+      juez: ${esc(c.juez || "no configurado")} · grafo: ${c.grafo_conocimiento.disponible ? esc(c.grafo_conocimiento.notas) + " notas" : "no disponible"}
+      ${c.modo_demo ? " · <b>modo demo (datos sintéticos)</b>" : ""}</p>
+    <h3>Skills</h3>
+    <table><tr><th>Skill</th><th>Dimensión</th><th>Tipos de modelo</th><th>Herramientas</th></tr>
+    ${c.skills.map((s) => `<tr><td><code>${esc(s.nombre)}@${esc(s.version)}</code></td><td>${esc(s.dimension)}</td>
+      <td>${esc(s.tipos_modelo.join(", "))}</td><td class="motivos">${esc(s.herramientas.join(", "))}</td></tr>`).join("")}</table>
+    <h3>Herramientas</h3>
+    <table><tr><th>Herramienta</th><th>Tipo</th><th>Descripción</th></tr>
+    ${c.herramientas.map((h) => `<tr><td><code>${esc(h.nombre)}@${esc(h.version)}</code></td><td>${esc(h.tipo)}</td>
+      <td class="motivos">${esc(h.descripcion)}</td></tr>`).join("")}</table>`;
+}
+
+async function validar(boton) {
+  boton.disabled = true;
+  boton.textContent = "Validando…";
+  try {
+    pintar(await api("/mrm/api/validaciones", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({expediente_id: boton.dataset.id})}));
+    cargarHistorial();
+  } catch (error) {
+    document.getElementById("resultado").innerHTML = `<p class="error">No se pudo validar: ${esc(error.message)}</p>`;
+  } finally {
+    boton.disabled = false;
+    boton.textContent = "Validar";
+  }
+}
+
+async function abrir(id) { pintar(await api(`/mrm/api/validaciones/${encodeURIComponent(id)}`)); }
+
+function detalleControl(r, componentes) {
+  const propios = componentes.filter((c) => c.control_id === r.control_id);
+  return `
+    ${propios.length ? `<b>Componentes</b><ul>${propios.map((c) => `<li><code>${esc(c.componente_id)}</code>
+      ${c.variante ? `(variante ${esc(c.variante)})` : ""}: ${esc(c.coincidencias)}/${esc(c.comparados)} ·
+      ${esc(c.veredicto)}${c.max_dif_abs != null ? ` · dif. máx. ${Number(c.max_dif_abs).toExponential(2)}` : ""}
+      ${c.detalle && c.detalle.tramos_divergentes && c.detalle.tramos_divergentes.length ? ` · divergen ${esc(JSON.stringify(c.detalle.tramos_divergentes))}` : ""}</li>`).join("")}</ul>` : ""}
+    ${r.evidencia.length ? `<b>Evidencia</b><ul>${r.evidencia.map((e) => `<li>[${esc(e.tipo)}] <code>${esc(e.fuente)}</code> @ ${esc(e.ubicacion)}
+      ${e.descripcion ? `· ${esc(e.descripcion)}` : ""}${e.cita ? ` — «${esc(e.cita)}»` : ""}</li>`).join("")}</ul>` : ""}
+    ${r.limitaciones.length ? `<b>Limitaciones</b><ul>${r.limitaciones.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>` : ""}
+    ${r.trazabilidad ? `<p class="motivos">Trazabilidad: ${esc(r.trazabilidad.skill)}@${esc(r.trazabilidad.version_skill)} ·
+      ${esc(r.trazabilidad.catalogo)}@${esc(r.trazabilidad.version_catalogo)} · control v${esc(r.trazabilidad.version_control)}</p>` : ""}`;
+}
+
+function pintar(e) {
+  const resultados = e.dimensiones.flatMap((d) => d.resultados_control);
+  const conteo = (v) => resultados.filter((r) => (r.veredicto || "no_aplica") === v).length;
+  const excluidos = e.dimensiones.flatMap((d) => d.controles_excluidos);
+  const filas = e.dimensiones.map((d) => d.resultados_control.map((r, i) => {
+    const id = `${d.dimension}-${i}`;
+    return `<tr class="fila-control" onclick="document.getElementById('${id}').hidden = !document.getElementById('${id}').hidden">
+        <td><code>${esc(r.control_id)}</code><br>${esc(r.nombre)}</td>
+        <td>${insignia(r.veredicto || "no_aplica")}</td><td>${esc(r.severidad)}</td>
+        <td>${esc(r.justificacion)}${r.requiere_revision_humana ? `<div class="motivos">Revisión humana: ${esc(r.motivos_escalamiento.join("; "))}</div>` : ""}</td>
+      </tr>
+      <tr id="${id}" class="detalle" hidden><td colspan="4">${detalleControl(r, d.resultados_componentes)}</td></tr>`;
+  }).join("")).join("");
+  document.getElementById("resultado").innerHTML = `
+    <h2>${esc(e.expediente_id)} · ${insignia(e.veredicto_integral)}</h2>
+    <p class="motivos">${esc(e.modelo.nombre)} · tipo ${esc(e.modelo.tipo_modelo)} · tier ${esc(e.modelo.tier)} ·
+      ${esc(e.fecha_utc)} · ${esc(e.duracion_s)} s · ${esc(e.invocaciones.length)} invocaciones de herramientas</p>
+    <div class="resumen">
+      <div class="cifra"><span>${conteo("no_cumple")}</span><small>no cumplen</small></div>
+      <div class="cifra"><span>${conteo("no_concluyente")}</span><small>no concluyentes</small></div>
+      <div class="cifra"><span>${conteo("cumple")}</span><small>cumplen</small></div>
+      <div class="cifra"><span>${conteo("no_aplica")}</span><small>no aplican</small></div>
+      <div class="cifra"><span>${excluidos.length}</span><small>excluidos por tier</small></div>
+    </div>
+    ${e.requiere_revision_humana ? `<p><b>Revisión humana obligatoria.</b> <span class="motivos">${esc(e.motivos_revision.join("; "))}</span></p>` : ""}
+    ${e.huecos_cobertura.length ? `<p><b>Sin cobertura automática:</b> ${e.huecos_cobertura.map((h) => esc(h.dimension)).join(", ")} (revisión manual completa)</p>` : ""}
+    <table><tr><th>Control</th><th>Veredicto</th><th>Severidad</th><th>Justificación</th></tr>${filas}</table>
+    ${excluidos.length ? `<h3>Excluidos por tier</h3><ul>${excluidos.map((c) => `<li><code>${esc(c.control_id)}</code> ${esc(c.motivo)}</li>`).join("")}</ul>` : ""}
+    <p><a href="/mrm/api/validaciones/${encodeURIComponent(e.id_validacion)}/informe" target="_blank">Informe en Markdown</a> ·
+       <a href="/mrm/api/validaciones/${encodeURIComponent(e.id_validacion)}" target="_blank">Expediente auditable (JSON)</a></p>
+    <p class="motivos">${esc(e.aviso)}</p>`;
+}
+
+let temporizador;
+document.getElementById("consulta").addEventListener("input", (evento) => {
+  clearTimeout(temporizador);
+  const q = evento.target.value.trim();
+  temporizador = setTimeout(async () => {
+    if (q.length < 3) { document.getElementById("practicas").innerHTML = ""; return; }
+    const practicas = await api(`/mrm/api/conocimiento?q=${encodeURIComponent(q)}&k=5`);
+    document.getElementById("practicas").innerHTML = practicas.length ? practicas.map((p) => `
+      <div class="practica"><b>${esc(p.nota)}</b><small>${esc(p.seccion)} · ${esc(p.camino)}</small>${esc(p.cita.slice(0, 280))}${p.cita.length > 280 ? "…" : ""}</div>`).join("")
+      : `<p class="vacio">Sin resultados.</p>`;
+  }, 300);
+});
+
+cargarExpedientes().catch((e) => document.getElementById("expedientes").innerHTML = `<p class="error">${esc(e.message)}</p>`);
+cargarHistorial().catch(() => {});
+cargarCapacidades().catch((e) => document.getElementById("capacidades").innerHTML = `<p class="error">${esc(e.message)}</p>`);
+</script>
+</body>
+</html>

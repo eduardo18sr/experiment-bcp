@@ -1,0 +1,120 @@
+# Catálogo de controles · entorno tecnológico × PD
+# Estado: borrador del piloto. Severidades, tiers y referencias pendientes de Gate 3.
+nombre: implementacion_pd
+version: 1.0.0
+dimension: entorno_tecnologico
+tipo_modelo: pd
+descripcion: >
+  Controles de segunda línea sobre la implementación de modelos de probabilidad de incumplimiento:
+  que el código productivo reproduzca la referencia metodológica en lógica, parámetros y versiones.
+criterios_comunes:
+  tolerancia_absoluta: 1.0e-8
+  tolerancia_relativa: 0.0
+controles:
+  - id: IMP-PD-001
+    version: 1.0.0
+    nombre: Reproducción de la salida del modelo
+    enunciado_ears: >
+      Cuando la implementación productiva, ejecutada con los parámetros que efectivamente carga, no reproduzca
+      dentro de la tolerancia declarada los valores de la referencia metodológica para alguna salida principal
+      del modelo, el sistema deberá levantar un hallazgo de severidad Alta.
+    evidencia_requerida: Celdas de la referencia, función productiva ejecutada y conteo de coincidencias por salida
+    tipo: deterministico
+    tier_minimo: 4
+    profundidad:
+      tier_1: todas las salidas principales, punto de referencia y casos frontera
+      tier_2-4: salidas principales en el punto de referencia
+    severidad: Alta
+    referencia: Res. S.B.S. 053-2023 · checklist de implementación v12, validación de la fórmula del modelo (control killer)
+    regla: reproduccion_salida_principal
+
+  - id: IMP-PD-002
+    version: 1.0.0
+    nombre: Equivalencia de la lógica de cálculo
+    enunciado_ears: >
+      Cuando la implementación, ejecutada con parámetros alineados a la referencia, no reproduzca dentro de la
+      tolerancia las salidas principales de la referencia, el sistema deberá levantar un hallazgo de severidad Alta.
+    evidencia_requerida: Resultado de la variante con parámetros alineados y registro del parche aplicado a la copia
+    tipo: deterministico
+    tier_minimo: 4
+    severidad: Alta
+    referencia: Res. S.B.S. 053-2023 · checklist de implementación v12, certificación del modelo (control killer)
+    regla: equivalencia_logica
+
+  - id: IMP-PD-003
+    version: 1.0.0
+    nombre: Precisión de los parámetros cargados
+    enunciado_ears: >
+      Cuando algún valor de un archivo de parámetros que la implementación carga difiera del valor de la
+      referencia por encima de la tolerancia declarada, el sistema deberá levantar un hallazgo de severidad Alta.
+    evidencia_requerida: Archivo cargado, línea de código que lo carga y conteo de valores que difieren
+    tipo: deterministico
+    tier_minimo: 4
+    severidad: Alta
+    referencia: Checklist de implementación v12, precisión de variables insumo y modelo (control SOX)
+    regla: precision_parametros
+
+  - id: IMP-PD-004
+    version: 1.0.0
+    nombre: Versión de parámetros utilizada
+    enunciado_ears: >
+      Cuando la implementación cargue un archivo de parámetros que no coincide con la referencia mientras otro
+      archivo del proyecto sí coincide, el sistema deberá levantar un hallazgo de severidad Media.
+    evidencia_requerida: >
+      Uso de cada archivo candidato (activo, comentado, dinámico o no referenciado) con su coincidencia.
+      Si la ruta se construye dinámicamente el resultado es no concluyente.
+    tipo: deterministico
+    tier_minimo: 4
+    severidad: Media
+    referencia: Checklist de implementación v12, versionamiento y control de cambios
+    regla: version_parametros
+
+  - id: IMP-PD-005
+    version: 1.0.0
+    nombre: Reglas de negocio derivadas de la salida
+    enunciado_ears: >
+      Cuando una salida derivada por una regla de negocio de la referencia (ajustes, extensiones o topes de curva)
+      no se reproduzca en la implementación con parámetros alineados, el sistema deberá levantar un hallazgo de
+      severidad Media.
+    evidencia_requerida: Tramos de la salida derivada que coinciden y que divergen
+    tipo: deterministico
+    tier_minimo: 3
+    severidad: Media
+    referencia: Checklist de implementación v12, validación de la fórmula del modelo
+    regla: reglas_derivadas
+
+  - id: IMP-PD-006
+    version: 1.0.0
+    nombre: Fronteras de las condiciones de rango
+    enunciado_ears: >
+      Cuando la referencia y la implementación produzcan resultados distintos en los valores frontera de una
+      condición de rango de la referencia, el sistema deberá levantar un hallazgo de severidad Media.
+    evidencia_requerida: Condición de la referencia y valores frontera donde divergen
+    tipo: deterministico
+    tier_minimo: 2
+    severidad: Media
+    referencia: Checklist de implementación v12, validación de la fórmula del modelo
+    regla: fronteras_rango
+    criterio:
+      max_casos: 40
+
+  - id: IMP-PD-007
+    version: 1.0.0
+    nombre: Buenas prácticas en el código del cálculo
+    enunciado_ears: >
+      Cuando el código que implementa el cálculo contravenga una buena práctica documentada en la base de
+      conocimiento del área, el sistema deberá levantar un hallazgo de severidad Baja que cite la práctica y la
+      línea de código.
+    evidencia_requerida: Cita literal de la línea de código y cita literal de la práctica del grafo de conocimiento
+    tipo: juicio
+    tier_minimo: 1
+    severidad: Baja
+    referencia: Checklist de implementación v12, revisión de código documentado
+    regla: buenas_practicas_codigo
+    criterio:
+      consulta: >
+        buenas prácticas de código: no repetir conocimiento, parámetros y versiones fijados en el código,
+        configuración separada de la lógica, responsabilidad única y bajo acoplamiento
+      rubrica: >
+        Considera versiones de archivos de parámetros escritas en el código, constantes de negocio fijas en el
+        código, referencias comentadas a versiones alternativas y responsabilidades mezcladas. No juzgues estilo.

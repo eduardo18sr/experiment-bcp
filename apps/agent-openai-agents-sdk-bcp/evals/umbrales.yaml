@@ -1,0 +1,7 @@
+# Umbrales de release (framework F4). PROVISIONALES: los aprueba quien responde por el agente (Gate 4),
+# no quien lo construye, y se fijan ANTES de medir. Nunca se bajan para que el agente pase.
+estado: provisional
+recall_hallazgos_criticos: 0.90   # de los controles que fallan con severidad Alta, cuántos detecta
+precision_no_cumple: 0.75         # de sus 'no_cumple', cuántos son correctos
+fidelidad_evidencia: 1.00         # citas que existen literalmente en su fuente (tolerancia cero)
+exactitud_deterministicos: 0.95   # coincidencia exacta del veredicto en controles determinísticos

@@ -1,0 +1,20 @@
+nombre: analizar_parametros
+version: 1.0.0
+tipo: deterministico
+descripcion: >
+  Normaliza cada tabla de parámetros de la referencia (orientada por filas o por columnas, con o sin
+  fórmulas) y la compara con cada archivo CSV candidato del proyecto. Por archivo informa su uso en el
+  código y su coincidencia con la referencia, por separado. No decide si una diferencia es un hallazgo.
+entrada:
+  libro: LibroCanonico de la referencia
+  tablas: Especificación de cada tabla (hoja, rango, orientación, clave y patrón de archivos)
+  raiz_proyecto: Directorio raíz del proyecto evaluado
+  referencias: Referencias a archivos producidas por indexar_repositorio
+  tolerancia: Tolerancia absoluta y relativa para valores numéricos
+salida:
+  tablas: Por tabla, el análisis de cada archivo candidato (uso, coincidencia, clasificación, conteos y diferencias)
+errores:
+  - tabla_invalida
+  - raiz_no_encontrada
+propietario: equipo-validacion-implementacion
+tests: tests/test_analizar_parametros.py

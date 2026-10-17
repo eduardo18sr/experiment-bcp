@@ -1,0 +1,38 @@
+name: Gobierno
+
+# Verifica en CI las reglas de AGENTS.md que se pueden verificar: una regla que solo vive en texto es una sugerencia.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  rutas-protegidas:
+    name: Directorios protegidos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Chasis, contratos y golden dataset requieren aprobación explícita
+        env:
+          ETIQUETAS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          app="apps/agent-openai-agents-sdk-bcp"
+          cambios="$(git diff --name-only "$BASE"...HEAD)"
+          tiene() { case ",$ETIQUETAS," in *",$1,"*) return 0 ;; *) return 1 ;; esac; }
+          fallo=0
+          if echo "$cambios" | grep -qE "^$app/mrm/(chasis|contratos)/"; then
+            if ! tiene "ruta-b-aprobada"; then
+              echo "::error::El PR modifica mrm/chasis o mrm/contratos (ruta B). Requiere spec aprobada (Gate 5) y la etiqueta ruta-b-aprobada."
+              fallo=1
+            fi
+          fi
+          # El README del golden es documentación, no datos etiquetados: no requiere la etiqueta.
+          if echo "$cambios" | grep -E "^$app/evals/golden/" | grep -qvE "/README\.md$"; then
+            if ! tiene "golden-etiquetado-humano"; then
+              echo "::error::El PR modifica el golden dataset. Solo el equipo lo etiqueta: requiere la etiqueta golden-etiquetado-humano."
+              fallo=1
+            fi
+          fi
+          exit $fallo

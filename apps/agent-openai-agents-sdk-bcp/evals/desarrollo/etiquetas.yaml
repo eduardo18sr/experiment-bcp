@@ -1,0 +1,39 @@
+# Etiquetas del set de DESARROLLO (casos sintéticos). Son verdad por construcción del generador.
+# No son el golden dataset: ese lo etiquetan dos validadores senior por separado (ver evals/golden/README.md).
+# Valores: cumple | no_cumple | no_concluyente | no_aplica | excluido (por tier)
+CASO_A_PD_CURVA:
+  IMP-PD-001: no_cumple
+  IMP-PD-002: cumple
+  IMP-PD-003: no_cumple
+  IMP-PD-004: no_cumple
+  IMP-PD-005: no_cumple
+  IMP-PD-006: no_cumple
+  IMP-PD-007: no_cumple   # juicio: solo se mide cuando hay juez configurado
+  DOC-PD-001: cumple
+  DOC-PD-002: no_cumple   # juicio: el perímetro omite canal y vigencia
+  DOC-PD-003: no_cumple   # no documenta la versión de parámetros
+  DOC-PD-004: cumple
+CASO_B_PRICING:
+  IMP-PRC-001: cumple
+  IMP-PRC-002: cumple
+  IMP-PRC-003: no_cumple
+  IMP-PRC-004: cumple
+  IMP-PRC-005: no_aplica
+  IMP-PRC-006: cumple
+  IMP-PRC-007: excluido
+  DOC-PRC-001: cumple
+  DOC-PRC-002: cumple     # juicio
+  DOC-PRC-003: cumple
+  DOC-PRC-004: cumple
+CASO_C_SCORING:
+  IMP-PD-001: cumple
+  IMP-PD-002: cumple
+  IMP-PD-003: cumple
+  IMP-PD-004: cumple
+  IMP-PD-005: no_aplica
+  IMP-PD-006: excluido
+  IMP-PD-007: excluido
+  DOC-PD-001: cumple
+  DOC-PD-002: cumple      # juicio
+  DOC-PD-003: cumple
+  DOC-PD-004: cumple

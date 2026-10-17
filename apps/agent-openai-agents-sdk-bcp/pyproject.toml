@@ -16,6 +16,8 @@ dependencies = [
     "openai-agents>=0.4.1",
     "python-dotenv>=1.2.1",
     "opentelemetry-exporter-otlp-proto-grpc>=1.25.0",
+    "openpyxl>=3.1.5",
+    "pyyaml>=6.0.2",
 ]
 
 [build-system]
@@ -38,6 +40,11 @@ exclude-newer = "7 days"
 default-groups = ["dev", "setup"]
 
 
+[tool.pytest.ini_options]
+testpaths = ["tests", "mrm", "evals"]
+pythonpath = ["."]
+addopts = "--import-mode=importlib"
+
 [project.scripts]
 quickstart = "scripts.quickstart:main"
 start-app = "scripts.start_app:main"
@@ -45,3 +52,4 @@ start-server = "agent_server.start_server:main"
 agent-evaluate = "agent_server.evaluate_agent:evaluate"
 discover-tools = "scripts.discover_tools:main"
 preflight = "scripts.preflight:main"
+mrm-evaluar = "evals.harness:main"

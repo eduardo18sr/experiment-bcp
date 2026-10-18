@@ -19,10 +19,11 @@ agent_server = AgentServer("ResponsesAgent", enable_chat_proxy=True)
 # Define the app as a module level variable to enable multiple workers
 app = agent_server.app  # noqa: F841
 
-# API de la plataforma MRM y página /validador. Las rutas registradas tienen prioridad sobre el proxy del chat.
-from mrm.api.rutas import router as router_mrm  # noqa: E402
+# API de la plataforma MRM y página /validador. Se registran ruta por ruta (no con include_router) para que
+# el proxy del chat las reconozca como rutas de la app; ver mrm/api/rutas.py.
+from mrm.api.rutas import registrar_rutas  # noqa: E402
 
-app.include_router(router_mrm)
+registrar_rutas(app)
 setup_mlflow_git_based_version_tracking()
 
 

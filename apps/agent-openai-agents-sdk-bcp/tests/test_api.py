@@ -1,10 +1,28 @@
-"""API REST y página /validador sobre la plataforma local (sin Databricks)."""
+"""API REST y página /validador sobre la plataforma local (sin Databricks).
+
+La app de prueba lleva el mismo filtro que el proxy del chat de MLflow (AgentServer con enable_chat_proxy):
+solo pasan las rutas que aparecen en `app.routes` con `path_regex`; el resto recibe "Not found".
+"""
 
 import pytest
 
 fastapi = pytest.importorskip("fastapi")
-from fastapi import FastAPI  # noqa: E402
+from fastapi import FastAPI, Request  # noqa: E402
+from fastapi.responses import Response  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
+
+
+def _app_como_agent_server() -> FastAPI:
+    app = FastAPI()
+
+    @app.middleware("http")
+    async def proxy_del_chat(request: Request, call_next):
+        for ruta in app.routes:
+            if hasattr(ruta, "path_regex") and ruta.path_regex.match(request.url.path):
+                return await call_next(request)
+        return Response("Not found", status_code=404, media_type="text/plain")
+
+    return app
 
 
 @pytest.fixture
@@ -13,9 +31,19 @@ def cliente(crear_plataforma, monkeypatch):
 
     plataforma = crear_plataforma()
     monkeypatch.setattr(rutas, "obtener_plataforma", lambda: plataforma)
-    app = FastAPI()
-    app.include_router(rutas.router)
+    app = _app_como_agent_server()
+    rutas.registrar_rutas(app)
     return TestClient(app)
+
+
+def test_el_proxy_del_chat_ve_todas_las_rutas_mrm():
+    from mrm.api import rutas
+
+    app = _app_como_agent_server()
+    rutas.registrar_rutas(app)
+    for ruta in rutas.router.routes:
+        ejemplo = ruta.path.replace("{id_validacion}", "X")
+        assert any(hasattr(r, "path_regex") and r.path_regex.match(ejemplo) for r in app.routes), ruta.path
 
 
 def test_flujo_validar_desde_la_pagina(cliente):

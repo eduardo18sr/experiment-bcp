@@ -1,0 +1,14 @@
+# Política de tiering y de human-in-the-loop. Plano 4 (gobierno).
+# Estado: BORRADOR del piloto. La aprueba el comité de riesgos en el Gate 0, no el equipo técnico.
+version: 0.1.0
+estado: borrador
+dimensiones_obligatorias:
+  1: [entorno_tecnologico, documentacion, calidad_datos]
+  2: [entorno_tecnologico, documentacion, calidad_datos]
+  3: [entorno_tecnologico, documentacion]
+  4: [entorno_tecnologico]
+hitl:
+  severidades_que_escalan: [Alta]
+  tiers_con_revision_completa: [1]
+  no_concluyente_escala: true
+  juicio_escala_en_etapa: [sombra, copiloto]

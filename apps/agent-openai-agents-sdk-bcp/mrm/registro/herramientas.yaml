@@ -1,0 +1,30 @@
+# Registro de herramientas. Nombre, versión y tipo salen del contrato: este archivo solo dice dónde está
+# la implementación y si está activa. Una versión nueva se agrega como otra entrada (no se edita la anterior).
+herramientas:
+  - contrato: herramientas/extraer_excel/contrato.yaml
+    implementacion: mrm.herramientas.extraer_excel.herramienta:ExtraerExcel
+    estado: activo
+  - contrato: herramientas/evaluar_formulas/contrato.yaml
+    implementacion: mrm.herramientas.evaluar_formulas.herramienta:EvaluarFormulas
+    estado: activo
+  - contrato: herramientas/indexar_repositorio/contrato.yaml
+    implementacion: mrm.herramientas.indexar_repositorio.herramienta:IndexarRepositorio
+    estado: activo
+  - contrato: herramientas/analizar_parametros/contrato.yaml
+    implementacion: mrm.herramientas.analizar_parametros.herramienta:AnalizarParametros
+    estado: activo
+  - contrato: herramientas/ejecutar_funcion/contrato.yaml
+    implementacion: mrm.herramientas.ejecutar_funcion.herramienta:EjecutarFuncion
+    estado: activo
+  - contrato: herramientas/comparar_series/contrato.yaml
+    implementacion: mrm.herramientas.comparar_series.herramienta:CompararSeries
+    estado: activo
+  - contrato: herramientas/generar_casos_frontera/contrato.yaml
+    implementacion: mrm.herramientas.generar_casos_frontera.herramienta:GenerarCasosFrontera
+    estado: activo
+  - contrato: herramientas/consultar_conocimiento/contrato.yaml
+    implementacion: mrm.herramientas.consultar_conocimiento.herramienta:ConsultarConocimiento
+    estado: activo
+  - contrato: herramientas/extraer_documento/contrato.yaml
+    implementacion: mrm.herramientas.extraer_documento.herramienta:ExtraerDocumento
+    estado: activo

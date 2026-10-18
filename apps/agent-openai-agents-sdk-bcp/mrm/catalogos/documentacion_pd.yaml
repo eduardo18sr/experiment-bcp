@@ -1,0 +1,81 @@
+# Catálogo de controles · documentación × PD
+# Estado: borrador del piloto. Severidades, tiers y referencias pendientes de Gate 3.
+nombre: documentacion_pd
+version: 1.0.0
+dimension: documentacion
+tipo_modelo: pd
+descripcion: >
+  Controles sobre la documentación metodológica de modelos de probabilidad de incumplimiento.
+  La presencia y la estructura son determinísticas; la suficiencia del contenido es juicio.
+controles:
+  - id: DOC-PD-001
+    version: 1.0.0
+    nombre: Sección de perímetro de aplicación
+    enunciado_ears: >
+      Cuando la documentación metodológica no contenga una sección sobre el perímetro de aplicación del modelo,
+      o esa sección no tenga contenido, el sistema deberá levantar un hallazgo de severidad Media.
+    evidencia_requerida: Documento y sección encontrada, o la lista de secciones del documento si no existe
+    tipo: deterministico
+    tier_minimo: 4
+    severidad: Media
+    referencia: Res. S.B.S. 053-2023 · documentación del modelo
+    regla: presencia_seccion
+    criterio:
+      titulos: [perímetro de aplicación, alcance del modelo, ámbito de aplicación]
+      minimo_caracteres: 40
+
+  - id: DOC-PD-002
+    version: 1.0.0
+    nombre: Perímetro de aplicación explícito
+    enunciado_ears: >
+      Cuando el documento no declare de forma explícita el perímetro de aplicación del modelo (segmento,
+      producto, canal y vigencia), el sistema deberá levantar un hallazgo de severidad Media.
+    evidencia_requerida: Cita textual de la sección donde se declara, o constancia de ausencia
+    tipo: juicio
+    tier_minimo: 4
+    profundidad:
+      tier_1: revisión exhaustiva de cada elemento
+      tier_2-4: revisión agregada
+    severidad: Media
+    referencia: Res. S.B.S. 053-2023 · documentación del modelo
+    regla: suficiencia_contenido
+    criterio:
+      titulos: [perímetro de aplicación, alcance del modelo, ámbito de aplicación]
+      elementos: [segmento, producto, canal, vigencia]
+      consulta: documentar el perímetro de aplicación del modelo con segmento, producto, canal y vigencia
+      rubrica: >
+        Cumple solo si cada elemento aparece declarado de forma explícita en la sección. Un elemento implícito,
+        ambiguo o ausente es incumplimiento. Cita el texto que declara cada elemento presente.
+
+  - id: DOC-PD-003
+    version: 1.0.0
+    nombre: Versión de parámetros productiva documentada
+    enunciado_ears: >
+      Cuando la documentación metodológica no contenga una sección que declare la versión de parámetros que
+      usa el modelo en producción, el sistema deberá levantar un hallazgo de severidad Media.
+    evidencia_requerida: Documento y sección encontrada, o la lista de secciones del documento si no existe
+    tipo: deterministico
+    tier_minimo: 4
+    severidad: Media
+    referencia: Checklist de implementación v12, versionamiento y control de cambios
+    regla: presencia_seccion
+    criterio:
+      titulos: [versión de parámetros, parámetros vigentes, parámetros productivos]
+      minimo_caracteres: 30
+
+  - id: DOC-PD-004
+    version: 1.0.0
+    nombre: Diccionario de variables
+    enunciado_ears: >
+      Cuando la documentación metodológica no contenga una tabla de variables con su nombre y su descripción,
+      el sistema deberá levantar un hallazgo de severidad Baja.
+    evidencia_requerida: Sección y encabezado de la tabla encontrada
+    tipo: deterministico
+    tier_minimo: 3
+    severidad: Baja
+    referencia: Checklist de implementación v12, revisión de código documentado
+    regla: presencia_tabla
+    criterio:
+      titulos: [variables, diccionario de datos]
+      columnas: [variable, descripción]
+      filas_minimas: 1

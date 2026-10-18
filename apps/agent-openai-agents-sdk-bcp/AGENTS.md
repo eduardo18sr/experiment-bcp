@@ -1,3 +1,8 @@
+> **Plataforma MRM:** este directorio contiene además la plataforma del framework de agentes del área (`mrm/`,
+> `evals/`, `jobs/`). Antes de tocarla, lee las reglas del repositorio en [`../../AGENTS.md`](../../AGENTS.md):
+> directorios protegidos, rutas de cambio y verificación al cerrar la sesión. Las instrucciones de abajo son las
+> de la plantilla de Databricks y aplican al despliegue de la app.
+
 # Agent Development Guide
 
 ## MANDATORY First Actions

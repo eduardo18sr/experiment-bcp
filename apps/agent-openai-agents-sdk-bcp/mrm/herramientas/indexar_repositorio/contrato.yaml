@@ -1,0 +1,22 @@
+nombre: indexar_repositorio
+version: 1.0.0
+tipo: deterministico
+descripcion: >
+  Indexa un proyecto Python sin ejecutarlo: archivos con su SHA-256, funciones con su firma,
+  constantes de módulo y referencias a archivos de datos, clasificadas en ACTIVO (literal en código),
+  COMENTADO (solo en un comentario) o DINAMICO (ruta construida en tiempo de ejecución).
+entrada:
+  raiz: Directorio raíz del proyecto evaluado
+  excluir: Directorios que no se recorren
+  max_bytes: Tamaño máximo de archivo a indexar
+salida:
+  archivos: Archivos Python con su SHA-256 y número de líneas
+  archivos_datos: Archivos de datos presentes en el proyecto
+  funciones: Funciones y métodos con módulo, línea y argumentos
+  referencias: Referencias a archivos de datos con línea, texto y estado
+  constantes: Constantes de módulo en mayúsculas
+  advertencias: Archivos omitidos o no analizables
+errores:
+  - raiz_no_encontrada
+propietario: equipo-validacion-implementacion
+tests: tests/test_indexar_repositorio.py

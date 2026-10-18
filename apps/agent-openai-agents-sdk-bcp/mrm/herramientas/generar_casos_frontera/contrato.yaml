@@ -1,0 +1,20 @@
+nombre: generar_casos_frontera
+version: 1.0.0
+tipo: deterministico
+descripcion: >
+  Recorre las fórmulas de la referencia de las que dependen los objetivos, encuentra condiciones que
+  comparan una celda de entrada con una constante (p. ej. H8<=19) y propone casos antes, en y después
+  de cada umbral. No ejecuta nada.
+entrada:
+  libro: LibroCanonico de la referencia
+  objetivos: Celdas o rangos cuyas dependencias se recorren
+  entradas: Celdas de entrada con su nombre, tipo (numero, entero, texto) y paso opcional
+  max_casos: Número máximo de casos
+salida:
+  condiciones: Condiciones de rango encontradas (celda, entrada, operador, umbral)
+  casos: Casos frontera con las sobrescrituras de celda que los producen
+  truncado: true si había más casos que max_casos
+errores:
+  - objetivo_invalido
+propietario: equipo-validacion-implementacion
+tests: tests/test_generar_casos_frontera.py

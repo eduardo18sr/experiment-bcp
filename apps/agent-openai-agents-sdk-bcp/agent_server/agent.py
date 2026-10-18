@@ -16,6 +16,7 @@ from mlflow.types.responses import (
     ResponsesAgentStreamEvent,
 )
 
+from agent_server.herramientas_mrm import HERRAMIENTAS_MRM, INSTRUCCIONES
 from agent_server.history import normalize_history_items
 from agent_server.utils import (
     build_mcp_url,
@@ -77,10 +78,10 @@ async def connect_healthy_mcp_servers(
 
 def create_agent(mcp_servers: list[McpServer] | None = None) -> Agent:
     return Agent(
-        name="Agent",
-        instructions="You are a helpful assistant.",
+        name="validador-implementacion",
+        instructions=INSTRUCCIONES,
         model="databricks-claude-sonnet-5-5",
-        tools=[get_current_time],
+        tools=[get_current_time, *HERRAMIENTAS_MRM],
         mcp_servers=mcp_servers or [],
     )
 

@@ -1,0 +1,47 @@
+nombre: validar-implementacion-calculo
+version: 1.0.0
+dimension: entorno_tecnologico
+descripcion: >
+  Verifica que la implementación productiva de un cálculo (Python) reproduce su referencia metodológica
+  (Excel): salidas, lógica con parámetros alineados, parámetros cargados, versión de parámetros, reglas
+  derivadas, fronteras de rango y buenas prácticas del código. Varias estrategias por caso (R1).
+aplica_a:
+  tipo_modelo: [pd, pricing]
+procedimiento:
+  - Extraer la referencia a la representación canónica (extraer_excel)
+  - Validar el oráculo contra los valores en caché (evaluar_formulas)
+  - Indexar el proyecto evaluado y sus referencias a archivos de datos (indexar_repositorio)
+  - Cruzar uso y coincidencia de cada archivo de parámetros (analizar_parametros)
+  - Ejecutar la función productiva con los parámetros que carga (ejecutar_funcion, variante activa)
+  - Si hay un archivo que coincide y no se usa, ejecutar con parámetros alineados (variante alineada)
+  - Comparar cada componente contra la referencia con la tolerancia del control (comparar_series)
+  - Generar casos frontera de las condiciones de rango y comparar oráculo contra implementación
+  - En controles de juicio, recuperar prácticas del grafo y consultar al juez con contexto limpio
+  - Traducir hechos a veredictos por control según la regla y el criterio del catálogo
+herramientas_requeridas:
+  - {nombre: extraer_excel, version_minima: 1.0.0}
+  - {nombre: evaluar_formulas, version_minima: 1.0.0}
+  - {nombre: indexar_repositorio, version_minima: 1.0.0}
+  - {nombre: analizar_parametros, version_minima: 1.0.0}
+  - {nombre: ejecutar_funcion, version_minima: 1.0.0}
+  - {nombre: comparar_series, version_minima: 1.0.0}
+  - {nombre: generar_casos_frontera, version_minima: 1.0.0}
+  - {nombre: consultar_conocimiento, version_minima: 1.0.0}
+reglas:
+  - reproduccion_salida_principal
+  - equivalencia_logica
+  - precision_parametros
+  - version_parametros
+  - reglas_derivadas
+  - fronteras_rango
+  - buenas_practicas_codigo
+usa_juez: true
+configuraciones:
+  - tipo_modelo: pd
+    catalogo: implementacion_pd
+    version_catalogo: 1.0.0
+    parametros: {timeout_ejecucion_s: 120, max_lineas_codigo_juez: 150}
+  - tipo_modelo: pricing
+    catalogo: implementacion_pricing
+    version_catalogo: 1.0.0
+    parametros: {timeout_ejecucion_s: 120, max_lineas_codigo_juez: 150}

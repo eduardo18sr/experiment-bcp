@@ -1,0 +1,33 @@
+nombre: ejecutar_funcion
+version: 1.0.0
+tipo: deterministico
+descripcion: >
+  Ejecuta una función del proyecto evaluado sobre una copia verificada por SHA-256, en un subproceso
+  aislado con timeout, para una lista de casos de entrada. Puede aplicar sustituciones de texto a la
+  copia (variante diagnóstica) y registra el parche aplicado. Nunca modifica el proyecto original.
+entrada:
+  raiz_proyecto: Directorio raíz del proyecto evaluado
+  funcion: Función a ejecutar, con la forma modulo:funcion
+  casos: Argumentos con nombre, uno por caso
+  sustituciones: Reemplazos de texto a aplicar en la copia (archivo, línea, buscar, reemplazar)
+  autorizado: Autorización explícita del expediente para ejecutar código
+  variante: Nombre de la variante de ejecución (activa, alineada...)
+  timeout_s: Tiempo máximo de ejecución en segundos
+salida:
+  variante: Nombre de la variante ejecutada
+  copia_verificada: La copia coincidía con el original antes del parche
+  original_intacto: El proyecto original no cambió durante la ejecución
+  sha256_manifiesto: Huella del conjunto de archivos del proyecto original
+  parche: Registro de cada sustitución aplicada, con SHA-256 antes y después
+  resultados: Salida o error de cada caso
+  duracion_s: Duración total
+  stderr_resumen: Últimos caracteres de la salida de error del proceso
+errores:
+  - ejecucion_no_autorizada
+  - raiz_no_encontrada
+  - copia_no_verificada
+  - sustitucion_sin_efecto
+  - timeout
+  - fallo_proceso
+propietario: equipo-validacion-implementacion
+tests: tests/test_ejecutar_funcion.py

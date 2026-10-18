@@ -1,0 +1,27 @@
+nombre: comparar_series
+version: 1.0.0
+tipo: deterministico
+descripcion: >
+  Compara dos series o escalares punto a punto con tolerancia absoluta y relativa declaradas.
+  Informa conteos, diferencias máximas, la primera divergencia y los tramos que coinciden y divergen.
+entrada:
+  referencia: Valores de la referencia metodológica
+  implementacion: Valores de la implementación productiva
+  etiquetas: Etiqueta de cada punto (p. ej. el periodo); por defecto 1..n
+  tolerancia: Tolerancia absoluta y relativa
+salida:
+  comparados: Puntos comparables
+  coincidencias: Puntos dentro de tolerancia
+  no_comparables: Puntos sin valor numérico o de texto en ambos lados
+  longitud_referencia: Longitud de la serie de referencia
+  longitud_implementacion: Longitud de la serie implementada
+  max_dif_abs: Diferencia absoluta máxima
+  max_dif_rel: Diferencia relativa máxima
+  primera_divergencia: Etiqueta del primer punto fuera de tolerancia
+  tramos_coincidentes: Tramos [desde, hasta] que coinciden
+  tramos_divergentes: Tramos [desde, hasta] que divergen
+  detalle: Comparación punto a punto
+errores:
+  - etiquetas_incompatibles
+propietario: equipo-validacion-implementacion
+tests: tests/test_comparar_series.py

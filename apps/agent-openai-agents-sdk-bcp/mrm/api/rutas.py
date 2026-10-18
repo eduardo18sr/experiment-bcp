@@ -1,15 +1,14 @@
 """Rutas HTTP de la plataforma MRM.
 
-Se montan en la app de Databricks junto al agente. Las rutas registradas aquí tienen prioridad sobre el
-proxy del chat, que solo reenvía lo que la app no atiende. La API devuelve el detalle completo (con
-valores) porque la consume el validador humano; el agente conversacional usa `resumen_para_llm`.
+Se montan en la app de Databricks junto al agente con `registrar_rutas(app)`. La API devuelve el detalle
+completo (con valores) porque la consume el validador humano; el agente conversacional usa `resumen_para_llm`.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from pydantic import BaseModel
 
@@ -18,6 +17,17 @@ from mrm.chasis.plataforma import obtener_plataforma
 
 router = APIRouter()
 PAGINA = Path(__file__).with_name("static") / "index.html"
+
+
+def registrar_rutas(app: FastAPI) -> None:
+    """Agrega cada ruta directamente a la app, en lugar de `app.include_router(router)`.
+
+    El proxy del chat de MLflow (AgentServer con enable_chat_proxy) solo deja pasar las rutas que encuentra
+    en `app.routes` con su `path_regex`, y responde "Not found" a todo lo demás. Desde FastAPI 0.14x,
+    `include_router` registra un único objeto interno sin `path_regex`, así que el proxy no ve las rutas.
+    """
+    for ruta in router.routes:
+        app.router.routes.append(ruta)
 
 
 class SolicitudValidar(BaseModel):
